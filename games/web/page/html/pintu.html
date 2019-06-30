@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>拼图游戏</title>
+    <style>
+        #app{
+            margin: 10px auto;
+            position: relative;
+            left: 30%;
+        }
+        .title{
+            font-size: 30px;
+            margin-left: 200px;
+        }
+        .box{
+            width: 606px;
+            border: 1px solid #e0dfdf;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .content{
+            border: 1px solid #ffffff;
+            width: 200px;
+            height: 200px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <span class="title">欢迎来到拼图游戏</span>
+        <div class="box">
+            <div class="content" v-for="item in dataList"><img :src="item.icon" @click="change(item)"/></div>
+            <div>
+                <span>步数：{{changeCount}}</span>
+                <button @click="original">原图</button>
+                <button @click="initData">重置游戏</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../js/vue2.0-min.js"></script>
+<script src="../js/axios.min.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            dataList: [], //方块数据
+            changeCount:0 //步数
+        },
+        mounted: function () {
+            this.initData();
+        },
+        methods: {
+            initData: function () {
+                var self = this;
+                axios.get("/games/pintu/initGame").then(function (response) {
+                    if (response.data.success) {
+                        self.changeCount = 0;
+                        self.dataList.splice(0,self.dataList.length);
+                        var buttons = response.data.content.pintuButtons;
+                        for (var i = 0; i < buttons.length; i++) {
+                            self.dataList.push(buttons[i]);
+                        }
+                    }
+                })
+            },
+            change:function (info) {
+                var self = this;
+                axios.post("/games/pintu/change",{"changeButton":info,"randomPintuButtons":this.dataList}).then(function (response) {
+                    if (response.data.success && response.data.content.pintuButtons != null) {
+                        self.changeCount++;
+                        self.dataList.splice(0,self.dataList.length);
+                        var buttons = response.data.content.pintuButtons;
+                        for (var i = 0; i < buttons.length; i++) {
+                            self.dataList.push(buttons[i]);
+                        }
+                    }
+                    if(response.data.msg != null){
+                        self.changeCount = 0;
+                        alert(response.data.msg);
+                    }
+                })
+            },
+            original:function () {
+                var self = this;
+                axios.post("/games/pintu/original").then(function (response) {
+                    if (response.data.success && response.data.content.sourceList != null) {
+                        self.changeCount = 0;
+                        self.dataList.splice(0,self.dataList.length);
+                        var buttons = response.data.content.sourceList;
+                        for (var i = 0; i < buttons.length; i++) {
+                            self.dataList.push(buttons[i]);
+                        }
+                    }
+                })
+            }
+        }
+    })
+</script>
+</html>

@@ -1,0 +1,53 @@
+.customer-button-class {
+  margin: 10px;width: 300px;
+}
+.button-sp-area{
+    margin: 0 auto;
+    text-align:center;
+}
+.mini-btn{
+    margin: 0 4px;
+    width: 82px;
+}
+.container {
+  background-color: rgb(241, 239, 239);
+  font-size: 17px;
+  color: rgb(90, 87, 87);
+}
+.weui-input {height: 30px;}
+.page__bd{width: 100%;}
+.margin-bottom-height{
+  margin-bottom: 48px;
+}
+.weui-demo-dialog{
+  visibility:hidden;
+  opacity:0;
+  transition:all .3s;
+}
+.weui-half-screen-dialog{
+  transition:all .3s;
+  transform:translateY(100%);
+}
+.weui-demo-dialog_show{
+  visibility:visible;
+  opacity:1;
+}
+.weui-demo-dialog_show .weui-half-screen-dialog{
+    transform:translateY(0);
+}
+.change-stock-input{
+  background-color: rgb(207, 204, 204);
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+  line-height: 40px;
+}
+.weui-dialog__bd{
+  display: inherit;
+}
+.subtract-stock-btn{
+  line-height: 40px !important;
+}
+.add-stock-btn{
+  line-height: 40px !important;
+}

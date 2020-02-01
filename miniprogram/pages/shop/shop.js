@@ -16,8 +16,21 @@ const app = getApp()
       stockChangeType: null,  //库存如何变更，增加或者减少
       changeStockNum:1,       //库存变更数量
       operatorShopCurrentStock: 0, //操作商品剩余库存
+      updateShopInfoFlag: false, //更新数据标记
+      updateShopItem: null,   //更新商品信息
+      operatorShopInfoLoading: false,
+      loading: false,    //下拉刷新
+      scanLoading:false,
+      scanTitle: "扫条形码识别商品",
+      pageStart: 0, //当前页
+      pageSize: 10, //页加载数据数量
+      appendResult: false, //是否拼接数据，只有上拉分页才会拼接
     },
     onLoad:function(){
+      this.getTabBar().setData({
+        selected: 0,
+        showFlag: ""
+      })
       this.onAllQuery();
     },
     scanShop:function(){
@@ -27,10 +40,11 @@ const app = getApp()
       wx.scanCode({
         onlyFromCamera: true,
         success(res) {
-          console.log(res)
           //商品条形码id
           self.setData({
-            shopId : res.result
+            shopId : res.result,
+            scanLoading: true,
+            scanTitle: "正在识别"
           })
           self.queryShopByShopId();
         }
@@ -81,38 +95,68 @@ const app = getApp()
      * 新增商品到数据库
      */
     onAdd: function () {
+      var self = this;
+      self.setData({
+        operatorShopInfoLoading:true
+      })
       if(!this.checkAddInput()){
+        self.setData({
+          operatorShopInfoLoading: false
+        })
         return false;
       }
       //校验shopId是否已经存在
-      if(this.checkShopIdExist()){
-        return false;
-      }
-      const db = wx.cloud.database()
-      const self = this;
-      db.collection('shops').add({
-        data: {
-          shopId: self.data.shopId,
-          shopName: self.data.shopName,
-          shopPrice: self.data.shopPrice,
-          shopDesc: self.data.shopDesc,
-          shopStatus: 1,
-          shopStock: self.data.shopStock,
-          createTime: new Date(),
-          updateTime: new Date()
-        },
-        success: res => {
-          this.clearAddInput();
-          this.shopTip("新增记录成功");
-          console.log('[数据库] [新增记录] 成功，记录 _id: ', res._id)
-          setTimeout(function(){
-            this.onAllQuery();
-          },500);
-        },
-        fail: err => {
-          this.shopTip("商品新增失败");
-          console.error('[数据库] [新增记录] 失败：', err)
+      this.checkShopIdExist(function(res){
+        if(res){
+          self.setData({
+            operatorShopInfoLoading: false
+          })
+          return false;
         }
+        console.log("shopId未新增");
+        const db = wx.cloud.database()
+        db.collection('shops').add({
+          data: {
+            shopId: self.data.shopId,
+            shopName: self.data.shopName,
+            shopPrice: self.data.shopPrice,
+            shopDesc: self.data.shopDesc,
+            shopStatus: 1,
+            shopStock: self.data.shopStock,
+            createTime: new Date(),
+            updateTime: new Date()
+          },
+          success: res => {
+            self.setData({
+              operatorShopInfoLoading: false
+            });
+            self.setData({
+              updateShopItem:{
+                shopId: self.data.shopId,
+                shopName: self.data.shopName,
+                shopPrice: self.data.shopPrice
+              },
+              changeStockNum: self.data.shopStock,
+              stockChangeType: "add"
+            })
+            //创建账单
+            self.createBill();
+            self.clearAddInput();
+            self.shopTip("新增记录成功");
+            setTimeout(function () {
+              self.onAllQuery();
+            }, 500);
+            console.log('[数据库] [新增记录] 成功，记录: ', res)
+            
+          },
+          fail: err => {
+            self.shopTip("商品新增失败");
+            console.error('[数据库] [新增记录] 失败：', err)
+            self.setData({
+              operatorShopInfoLoading: false
+            })
+          }
+        })
       })
     },
     /**
@@ -155,23 +199,24 @@ const app = getApp()
       }
       return true;
     },
-    checkShopIdExist:function(){
+    checkShopIdExist:function(_callBack){
       const db = wx.cloud.database()
       // 查询商品
       db.collection('shops').where({
-        shopId: this.data.shopId
+        shopId: this.data.shopId,
+        shopStatus: 1
       }).get({
         success: res => {
           if (res.data.length > 0) {
             this.shopTip(this.data.shopId + '已经存在数据，不能再次添加')
-            return true;
+            return _callBack(true);
           }
-          return false;
+          return _callBack(false);
         },
         fail: err => {
           this.shopTip("数据查询失败");
           console.error('[数据库] [查询记录] 失败：', err)
-          return false;
+          return _callBack(false);
         }
       })
     },
@@ -199,12 +244,11 @@ const app = getApp()
     },
     queryShopByShopId:function(){
       const db = wx.cloud.database()
-      const self = this;
       // 查询商品
       db.collection('shops').where({
         shopId: this.data.shopId,
-        shopStatus: this.data.shopStatus
-      }).orderBy("updateTime", "desc").get({
+        shopStatus: 1
+      }).get({
         success: res => {
           if (res.data.length > 0) {
             this.setData({
@@ -216,37 +260,68 @@ const app = getApp()
               showShopList: false,
             })
           }
-          console.log('[数据库] [查询记录] 成功: ', self.data.queryResult)
+          this.setData({
+            scanLoading: false,
+            scanTitle: "扫条形码识别商品"
+          })
           console.log('[数据库] [查询记录] 成功: ', res)
         },
         fail: err => {
-          wx.showToast({
-            icon: 'none',
-            title: '查询记录失败'
-          })
+          this.shopTip("查询记录失败");
           console.error('[数据库] [查询记录] 失败：', err)
         }
       })
     },
+    getStartPageNum:function(){
+       var _pageStart = this.data.pageStart;
+       this.setData({
+         pageStart: this.data.pageSize + _pageStart
+       })
+    },
     onAllQuery: function () {
+      var self = this;
+      self.setData({
+        loading:true
+      })
       const db = wx.cloud.database()
-      const self = this;
       // 查询商品
-      db.collection('shops').where({shopStatus:1}).orderBy("updateTime","desc").get({
+      db.collection('shops')
+            .where({shopStatus:1})
+            .orderBy("updateTime","desc")
+            .skip(self.data.pageStart)
+            .limit(self.data.pageSize)
+            .get({
         success: res => {
           if(res.data.length > 0){
             this.setData({
-              showShopList : true,
-              queryResult: res.data
+              showShopList : true
             })
+            if(this.data.appendResult){
+              var tempResult = res.data
+              tempResult: res.data
+              var oldResult = self.data.queryResult.concat();
+              for (var i = 0; i < tempResult.length; i++) {
+                oldResult.push(tempResult[i]);
+              }
+              self.setData({
+                queryResult: oldResult,
+                appendResult: false,
+                loading: false
+              })
+            }else{
+              self.setData({
+                queryResult: res.data,
+                loading: false
+              })
+            }
+            
           }
-          console.log('[数据库] [查询记录] 成功: ', self.data.queryResult)
           console.log('[数据库] [查询记录] 成功: ', res)
         },
         fail: err => {
-          wx.showToast({
-            icon: 'none',
-            title: '查询记录失败'
+          this.shopTip("查询记录失败");
+          self.setData({
+            loading: false
           })
           console.error('[数据库] [查询记录] 失败：', err)
         }
@@ -280,9 +355,7 @@ const app = getApp()
             shopStatus: 0
           },
           success: res => {
-            wx.showToast({
-              title: '删除成功',
-            })
+            this.shopTip("删除成功");
             this.setData({
               operatorShopId: null,
               sureDelete: false
@@ -290,33 +363,36 @@ const app = getApp()
             this.onAllQuery();
           },
           fail: err => {
-            wx.showToast({
-              icon: 'none',
-              title: '删除失败',
-            })
+            this.shopTip("删除失败");
             console.error('[数据库] [删除记录] 失败：', err)
           }
         })
       }
     },
     stockChangeDialog:function(e){
+      this.clearChangeStockParam();
+      var item = e.currentTarget.dataset.item
       this.setData({
         showStockDialog: true,
-        operatorShopId: e.currentTarget.id,
+        operatorShopId: item.shopId,
         stockChangeType: e.currentTarget.dataset.changetype,
-        operatorShopCurrentStock: e.currentTarget.dataset.stock
+        operatorShopCurrentStock: item.shopStock,
+        updateShopItem: item
       })
     },
     closeStockChangeDialog:function(e){
+      this.setData({
+        showStockDialog: false
+      })
       this.clearChangeStockParam();
     },
     clearChangeStockParam:function(){
       this.setData({
-        showStockDialog: false,
         operatorShopId: null,
         stockChangeType: null,
         changeStockNum: 1,
-        operatorShopCurrentStock: 0
+        operatorShopCurrentStock: 0,
+        updateShopItem: null
       })
     },
     /**
@@ -361,10 +437,14 @@ const app = getApp()
           shopStock: updateStockVal
         },
         success: res => {
+          this.setData({
+            showStockDialog: false
+          })
           this.shopTip("库存修改成功");
-          this.clearChangeStockParam();
+          //创建账单数据
+          this.createBill();
           this.onAllQuery();
-          console.error('[数据库] [修改记录] 成功：', res)
+          console.log('[数据库] [修改记录] 成功：', res)
         },
         fail: err => {
           this.shopTip("库存修改失败");
@@ -372,15 +452,110 @@ const app = getApp()
         }
       })
     },
-    onPullDownRefresh() {
-      console.log("aaa");
-      // 上拉刷新
-      if (!this.loading) {
-        this.fetchArticleList(1, true).then(() => {
-          // 处理完成后，终止下拉刷新
-          wx.stopPullDownRefresh()
+    /**
+     * 创建账单
+     */
+    createBill:function(){
+      const db = wx.cloud.database()
+      db.collection('bills').add({
+        data:{
+          shopId: this.data.updateShopItem.shopId,
+          shopName: this.data.updateShopItem.shopName,
+          num: this.data.changeStockNum,
+          price: this.data.changeStockNum * this.data.updateShopItem.shopPrice,
+          billType: this.data.stockChangeType,
+          createTime: new Date()
+        },
+        success: res=>{
+          console.error('[数据库] [创建账单] 成功：', res)
+        },
+        fail: err=>{
+          console.error('[数据库] [创建账单] 失败：', err)
+        }
+      })
+    },
+    /**
+     * 更新商品信息
+     */
+    updateShopInfo: function () {
+      this.setData({
+        operatorShopInfoLoading: true
+      })
+      if(!this.checkAddInput()){
+        this.setData({
+          operatorShopInfoLoading: false
         })
+        return false;
+      }
+      
+      const db = wx.cloud.database()
+      db.collection('shops').where({
+        shopId: this.data.shopId
+      }).update({
+        data: {
+          shopId: this.data.shopId,
+          shopName: this.data.shopName,
+          shopPrice: this.data.shopPrice,
+          shopDesc: this.data.shopDesc,
+          shopStock: this.data.shopStock,
+          updateTime: new Date()
+        },
+        success: res => {
+          this.setData({
+            operatorShopInfoLoading: false
+          })
+          this.shopTip("商品修改成功");
+          this.clearAddInput();
+          this.onAllQuery();
+          this.setData({
+            updateShopInfoFlag: false
+          })
+          console.error('[数据库] [修改记录] 成功：', res)
+        },
+        fail: err => {
+          this.setData({
+            operatorShopInfoLoading: false
+          })
+          this.shopTip("商品修改失败");
+          console.error('[数据库] [修改记录] 失败：', err)
+        }
+      })
+    },
+    showUpdateShopInfo:function(e){
+      var item = e.currentTarget.dataset.item;
+        this.setData({
+          shopId: item.shopId,
+          shopName: item.shopName,
+          shopStock: item.shopStock,
+          shopPrice: item.shopPrice,
+          shopDesc: item.shopDesc,
+          showShopList: false,
+          updateShopInfoFlag: true
+        })
+    },
+    /**
+     * 下拉事件
+     */
+    onPullDownRefresh() {
+      // 上拉刷新
+      if (this.data.showShopList) {
+        this.setData({
+          pageStart: 0
+        })
+        this.onAllQuery();
+        // 处理完成后，终止下拉刷新
+        wx.stopPullDownRefresh();
       }
     },
-
+    /**
+     * 上拉加载更多
+     */
+    onReachBottom: function () {
+      this.getStartPageNum();
+      this.setData({
+        appendResult:true
+      })
+      this.onAllQuery();
+      
+    }
   })

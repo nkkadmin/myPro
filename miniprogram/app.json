@@ -1,6 +1,8 @@
 {
   "pages": [
     "pages/shop/shop",
+    "pages/bill/bill",
+    "pages/statistic/index",
     "pages/index/index",
     "pages/userConsole/userConsole",
     "pages/storageConsole/storageConsole",
@@ -17,16 +19,22 @@
     "backgroundColor": "#ffffff",
     "list": [
       {
-        "pagePath": "pages/shop/shop",
-        "iconPath": "images/icon_component.png",
-        "selectedIconPath": "images/icon_component_HL.png",
-        "text": "组件"
+        "pagePath": "pages/bill/bill",
+        "iconPath": "images/icon_bill.png",
+        "selectedIconPath": "images/icon_bill_HL.png",
+        "text": "账单"
       },
       {
-        "pagePath": "pages/index/index",
-        "iconPath": "images/icon_API.png",
-        "selectedIconPath": "images/icon_API_HL.png",
-        "text": "接口"
+        "pagePath": "pages/shop/shop",
+        "iconPath": "images/icon_shop.png",
+        "selectedIconPath": "images/icon_shop_HL.png",
+        "text": "商品"
+      },
+      {
+        "pagePath": "pages/statistic/index",
+        "iconPath": "images/icon_statistic.png",
+        "selectedIconPath": "images/icon_statistic_HL.png",
+        "text": "统计"
       }
     ]
   },

@@ -1,0 +1,22 @@
+.customer-price{
+  float: right;
+}
+.query-select{
+  display: inline-block;
+  height: 40px;
+  width: 60px;
+  text-align: center;
+  line-height: 40px;
+  color: #fff;
+  margin-right: 10px;
+  border-radius: 5px;
+  border: 1px solid #1aad19;
+}
+.select-color{
+  background-color: #1aad19;
+}
+.no-select-color{
+  background-color: #f4f7f4;
+  color: #000;
+  border: 1px solid #dadbda;
+}

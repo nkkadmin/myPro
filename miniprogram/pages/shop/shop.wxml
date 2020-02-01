@@ -1,5 +1,6 @@
 <view class="container">
-    <button class="customer-button-class" type="primary" size="default" bindtap="scanShop"> 识别商品 </button>
+   
+    <button style="position: fixed;z-index: 9999;" class="customer-sanc-button-class" loading="{{scanLoading}}" type="primary" size="default" bindtap="scanShop"> {{scanTitle}} </button>
     <view class="form-body" wx:if="{{!showShopList}}">
       <view class="form-section">
         <view class="weui-cells__title">商品条形码</view>
@@ -41,9 +42,15 @@
           </view>
         </view>
       </view>
-      <button class="customer-button-class" type="default" bindtap="onAdd">新增商品</button>
+      <button class="customer-button-class" type="default" bindtap="onAllQuery">返回商品</button>
+      <button wx:if="{{!updateShopInfoFlag}}" class="customer-button-class" type="default" bindtap="onAdd" loading="{{operatorShopInfoLoading}}">新增商品</button>
+      <button wx:if="{{updateShopInfoFlag}}" class="customer-button-class" type="default" bindtap="updateShopInfo" loading="{{operatorShopInfoLoading}}">修改商品</button>
     </view>
     <view class="page__bd margin-bottom-height" wx:if="{{showShopList}}">
+      <view class="weui-loadmore" wx:if="{{loading}}">
+          <view class="weui-loading"></view>
+          <view class="weui-loadmore__tips">正在加载</view>
+        </view>
         <view class="weui-form-preview" wx:key="index" wx:for="{{queryResult}}" wx:for-item="item">
             <view class="weui-form-preview__hd">
                 <view class="weui-form-preview__item">
@@ -66,13 +73,13 @@
                 </view>
                 <view class="weui-form-preview__item">
                     <view class="weui-form-preview__label">备注</view>
-                    <view class="weui-form-preview__value">很长很长的名字</view>
+                    <view class="weui-form-preview__value">{{item.shopDesc}}</view>
                 </view>
             </view>
             <view class="button-sp-area"> 
-              <button class="weui-btn mini-btn" type="default" size="mini" bindtap="stockChangeDialog" id="{{item.shopId}}" data-stock="{{item.shopStock}}" data-changetype="subtract">卖出</button>
-              <button class="weui-btn mini-btn" type="default" size="mini" bindtap="stockChangeDialog" id="{{item.shopId}}" data-stock="{{item.shopStock}}" data-changetype="add">进货</button>
-              <button class="weui-btn mini-btn" type="primary" size="mini">更新</button>
+              <button class="weui-btn mini-btn" type="default" size="mini" bindtap="stockChangeDialog" data-item="{{item}}" data-changetype="subtract">卖出</button>
+              <button class="weui-btn mini-btn" type="default" size="mini" bindtap="stockChangeDialog" data-item="{{item}}" data-changetype="add">进货</button>
+              <button class="weui-btn mini-btn" type="primary" size="mini" bindtap="showUpdateShopInfo" data-item="{{item}}">修改</button>
               <button class="weui-btn mini-btn" type="warn" size="mini" bindtap="confirmDeletDialog" id="{{item.shopId}}">删除</button>
             </view>
         </view>
@@ -87,7 +94,7 @@
         </view>
         <view class="weui-half-screen-dialog__bd">
           <view class="weui-half-screen-dialog__desc">
-            是否确认删除{{sureDelete}}
+            是否确认删除
           </view>
           <view class="weui-half-screen-dialog__tips">
             删除后不可恢复数据

@@ -21,7 +21,7 @@
 	},
 	"appid": "wx1920487693be968b",
 	"projectname": "shop-price",
-	"libVersion": "2.10.0",
+	"libVersion": "2.10.1",
 	"compileType": "miniprogram",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},

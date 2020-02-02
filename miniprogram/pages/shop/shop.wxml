@@ -1,89 +1,88 @@
 <view class="container">
-   
-    <button style="position: fixed;z-index: 9999;" class="customer-sanc-button-class" loading="{{scanLoading}}" type="primary" size="default" bindtap="scanShop"> {{scanTitle}} </button>
-    <view class="form-body" wx:if="{{!showShopList}}">
-      <view class="form-section">
-        <view class="weui-cells__title">商品条形码</view>
-        <view class="weui-cells weui-cells_after-title">
-          <view class="weui-cell weui-cell_input">
-            <input class="weui-input" type="text" bindinput="bindShopIdInput" value="{{shopId}}"></input>
-          </view>
+  <button style="position: fixed;z-index: 9999;" class="customer-sanc-button-class" loading="{{scanLoading}}" type="primary" size="default" bindtap="scanShop"> {{scanTitle}} </button>
+  <view class="form-body" wx:if="{{!showShopList}}">
+    <view class="form-section">
+      <view class="weui-cells__title">商品条形码</view>
+      <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell weui-cell_input">
+          <input class="weui-input" type="text" bindinput="bindShopIdInput" value="{{shopId}}"></input>
         </view>
       </view>
-      <view class="form-section">
-        <view class="weui-cells__title">商品名称</view>
-        <view class="weui-cells weui-cells_after-title">
-          <view class="weui-cell weui-cell_input">
-            <input class="weui-input" type="text" bindinput="bindShopNameInput" value="{{shopName}}"></input>
-          </view>
-        </view>
-      </view>
-      <view class="form-section">
-        <view class="weui-cells__title">商品价格</view>
-        <view class="weui-cells weui-cells_after-title">
-          <view class="weui-cell weui-cell_input">
-            <input class="weui-input" type="number" bindinput="bindShopPriceInput" value="{{shopPrice}}"></input>
-          </view>
-        </view>
-      </view>
-      <view class="form-section">
-        <view class="weui-cells__title">商品库存</view>
-        <view class="weui-cells weui-cells_after-title">
-          <view class="weui-cell weui-cell_input">
-            <input class="weui-input" type="number" bindinput="bindShopStockInput" value="{{shopStock}}"></input>
-          </view>
-        </view>
-      </view>
-      <view class="form-section">
-        <view class="weui-cells__title">商品备注</view>
-        <view class="weui-cells weui-cells_after-title">
-          <view class="weui-cell weui-cell_input">
-            <textarea class="weui-textarea" placeholder="例子：10个一块" bindinput="bindShopDescInput" value="{{shopDesc}}" style="height: 3.3em" />
-          </view>
-        </view>
-      </view>
-      <button class="customer-button-class" type="default" bindtap="onAllQuery">返回商品</button>
-      <button wx:if="{{!updateShopInfoFlag}}" class="customer-button-class" type="default" bindtap="onAdd" loading="{{operatorShopInfoLoading}}">新增商品</button>
-      <button wx:if="{{updateShopInfoFlag}}" class="customer-button-class" type="default" bindtap="updateShopInfo" loading="{{operatorShopInfoLoading}}">修改商品</button>
     </view>
-    <view class="page__bd margin-bottom-height" wx:if="{{showShopList}}">
-      <view class="weui-loadmore" wx:if="{{loading}}">
-          <view class="weui-loading"></view>
-          <view class="weui-loadmore__tips">正在加载</view>
+    <view class="form-section">
+      <view class="weui-cells__title">商品名称</view>
+      <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell weui-cell_input">
+          <input class="weui-input" type="text" bindinput="bindShopNameInput" value="{{shopName}}"></input>
         </view>
-        <view class="weui-form-preview" wx:key="index" wx:for="{{queryResult}}" wx:for-item="item">
-            <view class="weui-form-preview__hd">
-                <view class="weui-form-preview__item">
-                    <view class="weui-form-preview__label">单价</view>
-                    <view class="weui-form-preview__value_in-hd">¥{{item.shopPrice}}</view>
-                </view>
-            </view>
-            <view class="weui-form-preview__bd">
-                <view class="weui-form-preview__item">
-                    <view class="weui-form-preview__label">商品条形码</view>
-                    <view class="weui-form-preview__value">{{item.shopId}}</view>
-                </view>
-                <view class="weui-form-preview__item">
-                    <view class="weui-form-preview__label">商品名称</view>
-                    <view class="weui-form-preview__value">{{item.shopName}}</view>
-                </view>
-                <view class="weui-form-preview__item">
-                    <view class="weui-form-preview__label">商品库存</view>
-                    <view class="weui-form-preview__value">{{item.shopStock}}</view>
-                </view>
-                <view class="weui-form-preview__item">
-                    <view class="weui-form-preview__label">备注</view>
-                    <view class="weui-form-preview__value">{{item.shopDesc}}</view>
-                </view>
-            </view>
-            <view class="button-sp-area"> 
-              <button class="weui-btn mini-btn" type="default" size="mini" bindtap="stockChangeDialog" data-item="{{item}}" data-changetype="subtract">卖出</button>
-              <button class="weui-btn mini-btn" type="default" size="mini" bindtap="stockChangeDialog" data-item="{{item}}" data-changetype="add">进货</button>
-              <button class="weui-btn mini-btn" type="primary" size="mini" bindtap="showUpdateShopInfo" data-item="{{item}}">修改</button>
-              <button class="weui-btn mini-btn" type="warn" size="mini" bindtap="confirmDeletDialog" id="{{item.shopId}}">删除</button>
-            </view>
+      </view>
+    </view>
+    <view class="form-section">
+      <view class="weui-cells__title">商品价格</view>
+      <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell weui-cell_input">
+          <input class="weui-input" type="number" bindinput="bindShopPriceInput" value="{{shopPrice}}"></input>
         </view>
-        <!-- 删除确认弹框 -->
+      </view>
+    </view>
+    <view class="form-section">
+      <view class="weui-cells__title">商品库存</view>
+      <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell weui-cell_input">
+          <input class="weui-input" type="number" bindinput="bindShopStockInput" value="{{shopStock}}"></input>
+        </view>
+      </view>
+    </view>
+    <view class="form-section">
+      <view class="weui-cells__title">商品备注</view>
+      <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell weui-cell_input">
+          <textarea class="weui-textarea" placeholder="例子：10个一块" bindinput="bindShopDescInput" value="{{shopDesc}}" style="height: 3.3em" />
+        </view>
+      </view>
+    </view>
+    <button class="customer-button-class" type="default" bindtap="onAllQuery">返回商品</button>
+    <button wx:if="{{!updateShopInfoFlag}}" class="customer-button-class" type="default" bindtap="onAdd" loading="{{operatorShopInfoLoading}}">新增商品</button>
+    <button wx:if="{{updateShopInfoFlag}}" class="customer-button-class" type="default" bindtap="updateShopInfo" loading="{{operatorShopInfoLoading}}">修改商品</button>
+  </view>
+  <view class="page__bd margin-bottom-height" wx:if="{{showShopList}}">
+    <view class="weui-loadmore" wx:if="{{loading}}">
+      <view class="weui-loading"></view>
+      <view class="weui-loadmore__tips">正在加载</view>
+    </view>
+    <view class="weui-form-preview" wx:key="index" wx:for="{{queryResult}}" wx:for-item="item">
+      <view class="weui-form-preview__hd">
+        <view class="weui-form-preview__item">
+          <view class="weui-form-preview__label">单价</view>
+          <view class="weui-form-preview__value_in-hd">¥{{item.shopPrice}}</view>
+        </view>
+      </view>
+      <view class="weui-form-preview__bd">
+        <view class="weui-form-preview__item">
+          <view class="weui-form-preview__label">商品条形码</view>
+          <view class="weui-form-preview__value">{{item.shopId}}</view>
+        </view>
+        <view class="weui-form-preview__item">
+          <view class="weui-form-preview__label">商品名称</view>
+          <view class="weui-form-preview__value">{{item.shopName}}</view>
+        </view>
+        <view class="weui-form-preview__item">
+          <view class="weui-form-preview__label">商品库存</view>
+          <view class="weui-form-preview__value">{{item.shopStock}}</view>
+        </view>
+        <view class="weui-form-preview__item">
+          <view class="weui-form-preview__label">备注</view>
+          <view class="weui-form-preview__value">{{item.shopDesc}}</view>
+        </view>
+      </view>
+      <view class="button-sp-area">
+        <button class="weui-btn mini-btn" type="default" size="mini" bindtap="stockChangeDialog" data-item="{{item}}" data-changetype="subtract">卖出</button>
+        <button class="weui-btn mini-btn" type="default" size="mini" bindtap="stockChangeDialog" data-item="{{item}}" data-changetype="add">进货</button>
+        <button class="weui-btn mini-btn" type="primary" size="mini" bindtap="showUpdateShopInfo" data-item="{{item}}">修改</button>
+        <button class="weui-btn mini-btn" type="warn" size="mini" bindtap="confirmDeletDialog" id="{{item.shopId}}">删除</button>
+      </view>
+    </view>
+    <!-- 删除确认弹框 -->
     <view class="weui-demo-dialog {{sureDelete ? 'weui-demo-dialog_show' : ''}}">
       <view class="weui-mask" bindtap="closeDialog"></view>
       <view class="weui-half-screen-dialog margin-bottom-height" catchtap="stopEvent">
@@ -101,32 +100,32 @@
           </view>
         </view>
         <view class="weui-half-screen-dialog__ft">
-            <button type="default" class="weui-btn" bindtap="closeDeleteDialog">考虑一下</button>
-            <button type="primary" class="weui-btn" bindtap="deleteShop">删除</button>
+          <button type="default" class="weui-btn" bindtap="closeDeleteDialog">考虑一下</button>
+          <button type="primary" class="weui-btn" bindtap="deleteShop">删除</button>
         </view>
       </view>
     </view>
-     <!-- 删除确认弹框 -->
-     <!-- 库存数量变更弹框 -->
-        <view class="weui-demo-dialog {{showStockDialog ? 'weui-demo-dialog_show' : ''}}">
-          <view class="weui-mask" bindtap="closeDialog"></view>
-          <view class="weui-dialog__wrp" bindtap="closeDialog">
-              <view class="weui-dialog" catchtap="stopEvent">
-                <view class="weui-dialog__hd">
-                  <view class="weui-dialog__title">{{stockChangeType == "add" ? "进货":"出售"}}</view>
-                </view>
-                <view class="weui-dialog__bd">
-                  <button class="weui-btn mini-btn subtract-stock-btn" type="default" size="mini" bindtap="subtractStockNum">➖</button>
-                  <input bindinput="bindInputChangeStock" class="change-stock-input" value="{{changeStockNum}}" type="number"></input>
-                  <button class="weui-btn mini-btn add-stock-btn" type="default" size="mini" bindtap="addStockNum">➕</button>
-                </view>
-                <view class="weui-dialog__ft">
-                    <view class="weui-dialog__btn weui-dialog__btn_default" bindtap="closeStockChangeDialog">取消</view>
-                    <view class="weui-dialog__btn" bindtap="updateStock">确定</view>
-                </view>
-              </view>
+    <!-- 删除确认弹框 -->
+    <!-- 库存数量变更弹框 -->
+    <view class="weui-demo-dialog {{showStockDialog ? 'weui-demo-dialog_show' : ''}}">
+      <view class="weui-mask" bindtap="closeDialog"></view>
+      <view class="weui-dialog__wrp" bindtap="closeDialog">
+        <view class="weui-dialog" catchtap="stopEvent">
+          <view class="weui-dialog__hd">
+            <view class="weui-dialog__title">{{stockChangeType == "add" ? "进货":"出售"}}</view>
+          </view>
+          <view class="weui-dialog__bd">
+            <button class="weui-btn mini-btn subtract-stock-btn" type="default" size="mini" bindtap="subtractStockNum">➖</button>
+            <input bindinput="bindInputChangeStock" class="change-stock-input" value="{{changeStockNum}}" type="number"></input>
+            <button class="weui-btn mini-btn add-stock-btn" type="default" size="mini" bindtap="addStockNum">➕</button>
+          </view>
+          <view class="weui-dialog__ft">
+            <view class="weui-dialog__btn weui-dialog__btn_default" bindtap="closeStockChangeDialog">取消</view>
+            <view class="weui-dialog__btn" bindtap="updateStock">确定</view>
           </view>
         </view>
-     <!-- 库存数量变更弹框 -->
+      </view>
     </view>
+    <!-- 库存数量变更弹框 -->
+  </view>
 </view>

@@ -1,3 +1,4 @@
+var util = require("../../util/util.js")
 Page({
   data:{
     listResult:[], //账单列表数据
@@ -40,23 +41,22 @@ Page({
       .limit(self.data.pageSize)
       .get({
         success: res => {
-          if (self.data.appendResult){
-            if (res.data.length > 0) {
-              var oldItem = self.data.listResult
-              for (var i = 0; i < res.data.length; i++) {
-                res.data[i].createTimeStr = self.dateFormat("YYYY-mm-dd HH:MM:SS", res.data[i].createTime);
-                oldItem.push(res.data[i]);
-              }
-              self.setData({
-                listResult: oldItem,
-                appendResult: false
-              })
+          
+          if (res.data.length > 0) {
+            var oldItem = [];
+            if (self.data.appendResult) {
+              oldItem = self.data.listResult
             }
-          }else{
+            for (var i = 0; i < res.data.length; i++) {
+              res.data[i].createTimeStr = util.dateFormat("YYYY-mm-dd HH:MM:SS", res.data[i].createTime);
+              oldItem.push(res.data[i]);
+            }
             self.setData({
-              listResult: res.data
+              listResult: oldItem,
+              appendResult: false
             })
           }
+          
           self.endLoading();
           console.log('[数据库] [查询记录] 成功: ', res)
         },
@@ -113,7 +113,7 @@ Page({
           if (res.data.length > 0) {
             var temp = [];
             for (var i = 0; i < res.data.length; i++) {
-              res.data[i].createTimeStr = this.dateFormat("YYYY年mm月dd日 HH:MM", res.data[0].createTime);
+              res.data[i].createTimeStr = util.dateFormat("YYYY-mm-dd HH:MM:SS", res.data[0].createTime);
               temp.push(res.data[i]);
             }
             this.setData({
@@ -175,23 +175,5 @@ Page({
       checkboxItems: checkboxItems
     });
   },
-  dateFormat: function(fmt, date) {
-    let ret;
-    const opt = {
-        "Y+": date.getFullYear().toString(),        // 年
-        "m+": (date.getMonth() + 1).toString(),     // 月
-        "d+": date.getDate().toString(),            // 日
-        "H+": date.getHours().toString(),           // 时
-        "M+": date.getMinutes().toString(),         // 分
-        "S+": date.getSeconds().toString()          // 秒
-        // 有其他格式化字符需求可以继续添加，必须转化成字符串
-    };
-    for (let k in opt) {
-        ret = new RegExp("(" + k + ")").exec(fmt);
-        if (ret) {
-            fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
-        };
-    };
-    return fmt;
-  }
+  
 });

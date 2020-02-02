@@ -1,5 +1,6 @@
 {
   "pages": [
+    "pages/hello/hello",
     "pages/shop/shop",
     "pages/bill/bill",
     "pages/statistic/index",

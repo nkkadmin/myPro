@@ -1,5 +1,69 @@
 /* pages/statistic/index.wxss */
-page{
-  text-align: center;
-  margin-top: 20px;
+.placeholder{
+    margin: 5px;
+    padding: 0 10px;
+    text-align: center;
+    background-color: #F7F7F7;
+    height: 2.3em;
+    line-height: 2.3em;
+    color:#000;
+}
+.customer-date{
+  float: right;
+  font-weight: 300;
+}
+.page{
+  margin-bottom: 60px;
+}
+.customer-more{
+  float: right;
+  margin-left: 10px;
+}
+.customer-close{
+  min-height: 40px;
+  line-height: 40px;
+}
+.weui-demo-dialog{
+  visibility:hidden;
+  opacity:0;
+  transition:opacity .3s;
+}
+.weui-demo-dialog_show{
+  visibility:visible;
+  opacity:1;
+}
+.weui-media-box__hd_in-appmsg{
+  width: 30px;
+  height: 30px;
+  margin-right: 0px;
+  line-height: 30;
+}
+.weui-cell__bd .title{
+  color: #000;
+  font-size: 16px;
+}
+.weui-cell__bd .num {
+  font-size: 14px;
+}
+.weui-cell__ft .price{
+  font-weight: both;
+}
+.weui-cell__ft .out-price {
+  color: #d40312;
+}
+.weui-cell__ft .in-price {
+  color: #108ee9;
+}
+.weui-cell__ft .create-date {
+  font-size: 14px;
+}
+.customer-dialog-clo{
+  font-size: 20px;
+  position: relative;
+  top: 17px;
+  left: 139px;
+}
+.bill-title{
+  position: relative;
+  top: -40px;
 }

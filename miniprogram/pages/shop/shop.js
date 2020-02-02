@@ -114,49 +114,54 @@ const app = getApp()
           return false;
         }
         console.log("shopId未新增");
-        const db = wx.cloud.database()
-        db.collection('shops').add({
-          data: {
-            shopId: self.data.shopId,
-            shopName: self.data.shopName,
-            shopPrice: self.data.shopPrice,
-            shopDesc: self.data.shopDesc,
-            shopStatus: 1,
-            shopStock: self.data.shopStock,
-            createTime: new Date(),
-            updateTime: new Date()
-          },
-          success: res => {
-            self.setData({
-              operatorShopInfoLoading: false
-            });
-            self.setData({
-              updateShopItem:{
-                shopId: self.data.shopId,
-                shopName: self.data.shopName,
-                shopPrice: self.data.shopPrice
-              },
-              changeStockNum: self.data.shopStock,
-              stockChangeType: "add"
-            })
-            //创建账单
-            self.createBill();
-            self.clearAddInput();
-            self.shopTip("新增记录成功");
-            setTimeout(function () {
-              self.onAllQuery();
-            }, 500);
-            console.log('[数据库] [新增记录] 成功，记录: ', res)
-            
-          },
-          fail: err => {
-            self.shopTip("商品新增失败");
-            console.error('[数据库] [新增记录] 失败：', err)
-            self.setData({
-              operatorShopInfoLoading: false
-            })
-          }
-        })
+        self.doAddShop();
+      })
+    },
+    doAddShop:function(){
+      var self = this;
+      const db = wx.cloud.database()
+      db.collection('shops').add({
+        data: {
+          shopId: self.data.shopId,
+          shopName: self.data.shopName,
+          shopPrice: self.data.shopPrice,
+          shopDesc: self.data.shopDesc,
+          shopStatus: 1,
+          shopStock: self.data.shopStock,
+          createTime: new Date(),
+          updateTime: new Date()
+        },
+        success: res => {
+          self.setData({
+            operatorShopInfoLoading: false
+          });
+          self.setData({
+            updateShopItem: {
+              shopId: self.data.shopId,
+              shopName: self.data.shopName,
+              shopPrice: self.data.shopPrice
+            },
+            changeStockNum: self.data.shopStock,
+            stockChangeType: "add"
+          })
+          //创建账单
+          self.createBill();
+          self.clearAddInput();
+          self.shopTip("新增记录成功");
+          setTimeout(function () {
+            self.onAllQuery();
+          }, 500);
+          console.log('[数据库] [新增记录] 成功，记录: ', res)
+
+        },
+        fail: err => {
+          self.setData({
+            operatorShopInfoLoading: false
+          })
+          self.shopTip("商品新增失败");
+          console.error('[数据库] [新增记录] 失败：', err)
+          
+        }
       })
     },
     /**
@@ -283,6 +288,11 @@ const app = getApp()
       self.setData({
         loading:true
       })
+      if (!this.data.appendResult) {
+        this.setData({
+          pageStart: 0
+        })
+      }
       const db = wx.cloud.database()
       // 查询商品
       db.collection('shops')
@@ -467,7 +477,7 @@ const app = getApp()
           createTime: new Date()
         },
         success: res=>{
-          console.error('[数据库] [创建账单] 成功：', res)
+          console.log('[数据库] [创建账单] 成功：', res)
         },
         fail: err=>{
           console.error('[数据库] [创建账单] 失败：', err)
@@ -510,7 +520,7 @@ const app = getApp()
           this.setData({
             updateShopInfoFlag: false
           })
-          console.error('[数据库] [修改记录] 成功：', res)
+          console.log('[数据库] [修改记录] 成功：', res)
         },
         fail: err => {
           this.setData({

@@ -2,12 +2,15 @@ page{
   background-color: rgb(252, 248, 248); 
 }
 .customer-sanc-button-class{
-  margin: 10px;
-  width: 300px;
+  margin: 20px;
+  width: 80%;
+}
+.delet-confirm button{
+  width: 40% !important;
 }
 .customer-button-class {
   margin: 10px;
-  width: 148px;
+  width: 41%;
   display: inline-block;
 }
 .button-sp-area{
@@ -22,12 +25,11 @@ page{
 .container {
   font-size: 17px;
   color: rgb(90, 87, 87);
+  margin-bottom: 50px;
 }
 .weui-input {height: 30px;}
 .page__bd{width: 100%;margin-top: 65px;}
-.margin-bottom-height{
-  margin-bottom: 48px;
-}
+
 .weui-demo-dialog{
   visibility:hidden;
   opacity:0;
@@ -92,4 +94,7 @@ page{
 }
 .form-body input{
   height: 40px;
+}
+.button-sp-area button{
+  width: 20% !important;
 }

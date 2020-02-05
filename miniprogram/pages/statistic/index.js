@@ -1,14 +1,14 @@
 var util = require("../../util/util.js")
 Page({
   data: {
-    todayResult: null,    //今日统计
-    thisWeekResult: null, //本周
-    thisMonthResult: null,  //本月
+    todayResult: "",    //今日统计
+    thisWeekResult: "", //本周
+    thisMonthResult: "",  //本月
     currentDate: new Date(),  //当天时间
-    thisMonthStartDate: null, //本月开始日期
-    thisMonthEndDate: null,   //本月结束日期
-    thisWeekStartDate: null,  //本周开始日期
-    thisWeekEndDate: null,    //本周结束日期
+    thisMonthStartDate: "", //本月开始日期
+    thisMonthEndDate: "",   //本月结束日期
+    thisWeekStartDate: "",  //本周开始日期
+    thisWeekEndDate: "",    //本周结束日期
     billInfos:[],             //账单详情
     showBillDialog: false,    //是否显示账单详情弹框
   },
@@ -51,7 +51,16 @@ Page({
   showLoading:function(){
     wx.showLoading({
       title: '数据加载中...',
-    })
+    });
+    var self = this;
+    //防止长时间不出数据蒙版不关闭问题
+    setTimeout(function(){
+      self.hideLoading();
+      wx.showToast({
+        icon: 'none',
+        title: "数据加载超时"
+      })
+    },10000);
   },
   hideLoading:function(){
     wx.hideLoading();

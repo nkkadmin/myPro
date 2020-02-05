@@ -3,7 +3,8 @@ const app = getApp()
     data: {
       shopId: "",  //条形码
       shopName: "",  //商品名称
-      shopPrice: "",  //商品价格
+      shopIncomePrice: "", //商品进货价格
+      shopPrice: "",  //商品出售价格
       shopStock: "",  //商品库存
       shopDesc: "",   //商品备注
       shopStatus: "1", //商品状态 1 有效 ； 0 无效
@@ -65,6 +66,11 @@ const app = getApp()
         shopPrice: e.detail.value
       })
     },
+    bindShopIncomePriceInput:function(e){
+      this.setData({
+        shopIncomePrice: e.detail.value
+      })
+    },
     bindShopStockInput: function (e) {
       this.setData({
         shopStock: e.detail.value
@@ -96,9 +102,15 @@ const app = getApp()
      */
     onAdd: function () {
       var self = this;
+      if (this.data.operatorShopInfoLoading) {
+        console.log("数据处理中，不需要重复提交");
+        return false;
+      }
+      console.log("add...");
       self.setData({
         operatorShopInfoLoading:true
       })
+     
       if(!this.checkAddInput()){
         self.setData({
           operatorShopInfoLoading: false
@@ -111,6 +123,7 @@ const app = getApp()
           self.setData({
             operatorShopInfoLoading: false
           })
+          console.log("shopId已经存在");
           return false;
         }
         console.log("shopId未新增");
@@ -124,6 +137,7 @@ const app = getApp()
         data: {
           shopId: self.data.shopId,
           shopName: self.data.shopName,
+          shopIncomePrice: self.data.shopIncomePrice,
           shopPrice: self.data.shopPrice,
           shopDesc: self.data.shopDesc,
           shopStatus: 1,
@@ -171,6 +185,7 @@ const app = getApp()
         this.setData({
           shopId: "",
           shopName: "",
+          shopIncomePrice:"",
           shopPrice: "",
           shopStock: "",
           shopDesc: ""
@@ -186,6 +201,10 @@ const app = getApp()
       }
       if (this.data.shopName == null || this.data.shopName == "") {
         this.shopTip("请输入商品名称");
+        return false;
+      }
+      if (this.data.shopIncomePrice == null || this.data.shopIncomePrice == ""){
+        this.shopTip("请输入商品进货价");
         return false;
       }
       if (this.data.shopPrice == null || this.data.shopPrice == "") {
@@ -365,7 +384,11 @@ const app = getApp()
             shopStatus: 0
           },
           success: res => {
-            this.shopTip("删除成功");
+            if (res.stats.updated > 0){
+              this.shopTip("删除成功");
+            }else{
+              this.shopTip("删除失败，只能创建人进行删除");
+            }
             this.setData({
               operatorShopId: null,
               sureDelete: false
@@ -450,7 +473,12 @@ const app = getApp()
           this.setData({
             showStockDialog: false
           })
-          this.shopTip("库存修改成功");
+          if (res.stats.updated > 0) {
+            this.shopTip("库存修改成功");
+          }else{
+            this.shopTip("库存修改失败，只能创建人进行修改");
+          }
+          
           //创建账单数据
           this.createBill();
           this.onAllQuery();
@@ -463,6 +491,20 @@ const app = getApp()
       })
     },
     /**
+     * 查看进货价
+     */
+    lookIncomPrice:function(e){
+      var item = e.currentTarget.dataset.item;
+      wx.showModal({
+        title: item.shopName,
+        content: '进货价：¥' + (typeof (item.shopIncomePrice) == "undefined" ? "" : item.shopIncomePrice),
+        cancelText: "关闭",
+        success: function (res) {
+          
+        }
+      });
+    },
+    /**
      * 创建账单
      */
     createBill:function(){
@@ -472,7 +514,7 @@ const app = getApp()
           shopId: this.data.updateShopItem.shopId,
           shopName: this.data.updateShopItem.shopName,
           num: this.data.changeStockNum,
-          price: this.data.changeStockNum * this.data.updateShopItem.shopPrice,
+          price: this.data.changeStockNum * parseFloat(this.data.updateShopItem.shopIncomePrice),
           billType: this.data.stockChangeType,
           createTime: new Date()
         },
@@ -505,6 +547,7 @@ const app = getApp()
         data: {
           shopId: this.data.shopId,
           shopName: this.data.shopName,
+          shopIncomePrice: this.data.shopIncomePrice,
           shopPrice: this.data.shopPrice,
           shopDesc: this.data.shopDesc,
           shopStock: this.data.shopStock,
@@ -514,7 +557,12 @@ const app = getApp()
           this.setData({
             operatorShopInfoLoading: false
           })
-          this.shopTip("商品修改成功");
+          if (res.stats.updated > 0) {
+            this.shopTip("商品修改成功");
+          } else {
+            this.shopTip("商品修改失败，只能创建人进行修改");
+          }
+          
           this.clearAddInput();
           this.onAllQuery();
           this.setData({
@@ -531,11 +579,23 @@ const app = getApp()
         }
       })
     },
+    /**
+     * 返回列表
+     */
+    backShopList:function(){
+      this.setData({
+        operatorShopInfoLoading: false,
+        appendResult: false
+      })
+      this.clearAddInput();
+      this.onAllQuery();
+    },
     showUpdateShopInfo:function(e){
       var item = e.currentTarget.dataset.item;
         this.setData({
           shopId: item.shopId,
           shopName: item.shopName,
+          shopIncomePrice: item.shopIncomePrice,
           shopStock: item.shopStock,
           shopPrice: item.shopPrice,
           shopDesc: item.shopDesc,
@@ -550,7 +610,8 @@ const app = getApp()
       // 上拉刷新
       if (this.data.showShopList) {
         this.setData({
-          pageStart: 0
+          pageStart: 0,
+          appendResult: false
         })
         this.onAllQuery();
         // 处理完成后，终止下拉刷新
@@ -561,11 +622,13 @@ const app = getApp()
      * 上拉加载更多
      */
     onReachBottom: function () {
+      if (!this.data.showShopList) {
+        return false;
+      }
       this.getStartPageNum();
       this.setData({
         appendResult:true
       })
       this.onAllQuery();
-      
     }
   })

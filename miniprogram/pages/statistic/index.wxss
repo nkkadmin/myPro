@@ -13,7 +13,7 @@
   font-weight: 300;
 }
 .page{
-  margin-bottom: 60px;
+  margin-bottom: 70px;
 }
 .customer-more{
   float: right;

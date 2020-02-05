@@ -1,11 +1,11 @@
 <view class="container">
-  <button style="position: fixed;z-index: 9999;" class="customer-sanc-button-class" loading="{{scanLoading}}" type="primary" size="default" bindtap="scanShop"> {{scanTitle}} </button>
-  <view class="form-body" wx:if="{{!showShopList}}">
+  <button style="position: fixed;z-index: 9999;display:block;margin:0 auto;" class="customer-sanc-button-class" loading="{{scanLoading}}" type="primary" size="default" bindtap="scanShop"> {{scanTitle}} </button>
+  <view class="form-body" wx:if="{{!showShopList}}" style="margin-bottom:50px;">
     <view class="form-section">
       <view class="weui-cells__title">商品条形码</view>
       <view class="weui-cells weui-cells_after-title">
         <view class="weui-cell weui-cell_input">
-          <input class="weui-input" type="text" bindinput="bindShopIdInput" value="{{shopId}}"></input>
+          <input class="weui-input" type="text" disabled="disabled" bindinput="bindShopIdInput" value="{{shopId}}"></input>
         </view>
       </view>
     </view>
@@ -18,7 +18,15 @@
       </view>
     </view>
     <view class="form-section">
-      <view class="weui-cells__title">商品价格</view>
+      <view class="weui-cells__title">商品进货价格</view>
+      <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell weui-cell_input">
+          <input class="weui-input" type="number" bindinput="bindShopIncomePriceInput" value="{{shopIncomePrice}}"></input>
+        </view>
+      </view>
+    </view>
+    <view class="form-section">
+      <view class="weui-cells__title">商品出售价格</view>
       <view class="weui-cells weui-cells_after-title">
         <view class="weui-cell weui-cell_input">
           <input class="weui-input" type="number" bindinput="bindShopPriceInput" value="{{shopPrice}}"></input>
@@ -41,11 +49,11 @@
         </view>
       </view>
     </view>
-    <button class="customer-button-class" type="default" bindtap="onAllQuery">返回商品</button>
-    <button wx:if="{{!updateShopInfoFlag}}" class="customer-button-class" type="default" bindtap="onAdd" loading="{{operatorShopInfoLoading}}">新增商品</button>
-    <button wx:if="{{updateShopInfoFlag}}" class="customer-button-class" type="default" bindtap="updateShopInfo" loading="{{operatorShopInfoLoading}}">修改商品</button>
+    <button wx:if="{{!updateShopInfoFlag}}" disabled="{{operatorShopInfoLoading?'disabled':''}}" class="customer-button-class" type="default" bindtap="onAdd" loading="{{operatorShopInfoLoading}}">新增商品</button>
+    <button wx:if="{{updateShopInfoFlag}}" disabled="{{operatorShopInfoLoading?'disabled':''}}" class="customer-button-class" type="default" bindtap="updateShopInfo" loading="{{operatorShopInfoLoading}}">修改商品</button>
+    <button class="customer-button-class" type="default" bindtap="backShopList">返回商品</button>
   </view>
-  <view class="page__bd margin-bottom-height" wx:if="{{showShopList}}">
+  <view class="page__bd margin-bottom-height" style="margin-bottom: 50px;" wx:if="{{showShopList}}">
     <view class="weui-loadmore" wx:if="{{loading}}">
       <view class="weui-loading"></view>
       <view class="weui-loadmore__tips">正在加载</view>
@@ -61,6 +69,10 @@
         <view class="weui-form-preview__item">
           <view class="weui-form-preview__label">商品条形码</view>
           <view class="weui-form-preview__value">{{item.shopId}}</view>
+        </view>
+        <view class="weui-form-preview__item">
+          <view class="weui-form-preview__label">商品进货价</view>
+          <view class="weui-form-preview__value" data-item="{{item}}" bindtap="lookIncomPrice">查看</view>
         </view>
         <view class="weui-form-preview__item">
           <view class="weui-form-preview__label">商品名称</view>
@@ -85,7 +97,7 @@
     <!-- 删除确认弹框 -->
     <view class="weui-demo-dialog {{sureDelete ? 'weui-demo-dialog_show' : ''}}">
       <view class="weui-mask" bindtap="closeDialog"></view>
-      <view class="weui-half-screen-dialog margin-bottom-height" catchtap="stopEvent">
+      <view class="weui-half-screen-dialog margin-bottom-height" catchtap="stopEvent" style="margin-bottom:35px;">
         <view class="weui-half-screen-dialog__hd">
           <view class="weui-half-screen-dialog__hd__side">
             <view class="weui-icon-btn weui-icon-btn_close" bindtap="closeDeleteDialog">关闭</view>
@@ -99,7 +111,7 @@
             删除后不可恢复数据
           </view>
         </view>
-        <view class="weui-half-screen-dialog__ft">
+        <view class="weui-half-screen-dialog__ft delet-confirm">
           <button type="default" class="weui-btn" bindtap="closeDeleteDialog">考虑一下</button>
           <button type="primary" class="weui-btn" bindtap="deleteShop">删除</button>
         </view>

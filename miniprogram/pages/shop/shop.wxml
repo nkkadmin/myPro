@@ -21,7 +21,7 @@
       <view class="weui-cells__title">商品进货价格</view>
       <view class="weui-cells weui-cells_after-title">
         <view class="weui-cell weui-cell_input">
-          <input class="weui-input" type="number" bindinput="bindShopIncomePriceInput" value="{{shopIncomePrice}}"></input>
+          <input class="weui-input" type="digit" bindinput="bindShopIncomePriceInput" value="{{shopIncomePrice}}"></input>
         </view>
       </view>
     </view>
@@ -29,7 +29,7 @@
       <view class="weui-cells__title">商品出售价格</view>
       <view class="weui-cells weui-cells_after-title">
         <view class="weui-cell weui-cell_input">
-          <input class="weui-input" type="number" bindinput="bindShopPriceInput" value="{{shopPrice}}"></input>
+          <input class="weui-input" type="digit" bindinput="bindShopPriceInput" value="{{shopPrice}}"></input>
         </view>
       </view>
     </view>
@@ -37,7 +37,7 @@
       <view class="weui-cells__title">商品库存</view>
       <view class="weui-cells weui-cells_after-title">
         <view class="weui-cell weui-cell_input">
-          <input class="weui-input" type="number" bindinput="bindShopStockInput" value="{{shopStock}}"></input>
+          <input class="weui-input" type="digit" bindinput="bindShopStockInput" value="{{shopStock}}"></input>
         </view>
       </view>
     </view>
@@ -128,7 +128,7 @@
           </view>
           <view class="weui-dialog__bd">
             <button class="weui-btn mini-btn subtract-stock-btn" type="default" size="mini" bindtap="subtractStockNum">➖</button>
-            <input bindinput="bindInputChangeStock" class="change-stock-input" value="{{changeStockNum}}" type="number"></input>
+            <input bindinput="bindInputChangeStock" class="change-stock-input" value="{{changeStockNum}}" type="digit"></input>
             <button class="weui-btn mini-btn add-stock-btn" type="default" size="mini" bindtap="addStockNum">➕</button>
           </view>
           <view class="weui-dialog__ft">

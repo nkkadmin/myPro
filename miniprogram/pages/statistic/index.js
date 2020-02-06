@@ -56,10 +56,6 @@ Page({
     //防止长时间不出数据蒙版不关闭问题
     setTimeout(function(){
       self.hideLoading();
-      wx.showToast({
-        icon: 'none',
-        title: "数据加载超时"
-      })
     },10000);
   },
   hideLoading:function(){

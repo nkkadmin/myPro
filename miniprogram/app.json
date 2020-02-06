@@ -1,8 +1,7 @@
 {
   "pages": [
-    "pages/shop/shop",
     "pages/hello/hello",
-    
+    "pages/shop/shop",
     "pages/bill/bill",
     "pages/statistic/index",
     "pages/index/index",

@@ -34,7 +34,6 @@ Page({
     var self = this;
     self.startLoading();
     const db = wx.cloud.database()
-    // 查询商品
     db.collection('bills')
       .orderBy("createTime", "desc")
       .skip(self.data.pageStart)

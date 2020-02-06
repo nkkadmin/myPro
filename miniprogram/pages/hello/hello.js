@@ -22,8 +22,48 @@ Page({
   hasStrongCode:function(){
     var self = this;
     var res = wx.getStorageSync("code");
-    this.setData({
-      showInput: res != null > 0 ? "1" : "-1"
+    if(res != null && res != ""){
+      self.checkCodeHasDb(res,function(isTure){
+        if(!isTure){
+          console.log("校验code是否无效");
+          self.setData({
+            showInput: "-1"
+          });
+          return false;
+        }
+      })
+    }
+    self.setData({
+      showInput: (res != null && res != "") ? "1" : "-1"
+    });
+  },
+  /**
+   * 判断code在数据库是否还存在
+   *  return true code 有效
+   *          false  code 无效
+   */
+  checkCodeHasDb:function(res,_callBack){
+    var currentTime = new Date().getTime();
+    var cacheTime = new Date(res.createTime).getTime();
+    var diffTime = currentTime - cacheTime;
+    //ms 转成 s
+    var disss = diffTime / 1000;
+    console.log(disss,"disss");
+    //如果超过12小时，需要校验一次数据库这个code是否还存在
+    //12小时转成秒s
+    var maxTimes = 60 * 60 * 12;
+    if(disss < 60){
+        return _callBack(true);
+    }
+    this.doCheckCode(res.code,function(response){
+      if (response != null && response.data.length > 0){
+        res.createTime = new Date();
+        wx.setStorageSync("code", res);
+        return _callBack(true);
+      }else{
+        wx.removeStorageSync("code");
+        return _callBack(false);
+      }
     });
   },
   checkCode: function (){
@@ -38,25 +78,33 @@ Page({
       self.hideLoading();
       return false;
     }
+    self.doCheckCode(self.data.code,function(res){
+      self.hideLoading();
+      if (res != null && res.data.length > 0) {
+        var cachObj = {
+          code: res.data[0].anCode,
+          createTime: new Date()
+        }
+        wx.setStorageSync("code", cachObj);
+        self.toShop();
+      } else {
+        self.showTip("暗号错误，请重新输入");
+      }
+    });
+  },
+  doCheckCode:function(code,_callBack){
     const db = wx.cloud.database()
     db.collection('passCode').where({
-      anCode: self.data.code
+      anCode: code
     }).get({
-        success: res => {
-          self.hideLoading();
-          console.log(res);
-          if(res.data.length > 0){
-            wx.setStorageSync("code", "123456");
-            self.toShop();
-          }else{
-            self.showTip("暗号错误，请重新输入");
-          }
-        },
-        fail: err => {
-          self.hideLoading();
-          console.error('[数据库] [新增记录] 失败：', err)
-        }
-      })
+      success: res => {
+        return _callBack(res);
+      },
+      fail: err => {
+        console.error('[数据库] [新增记录] 失败：', err)
+        return _callBack(null);
+      }
+    })
   },
   showTip: function (msg) {
     wx.showToast({

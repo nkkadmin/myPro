@@ -153,7 +153,8 @@ const app = getApp()
             updateShopItem: {
               shopId: self.data.shopId,
               shopName: self.data.shopName,
-              shopPrice: self.data.shopPrice
+              shopPrice: self.data.shopPrice,
+              shopIncomePrice: self.data.shopIncomePrice
             },
             changeStockNum: self.data.shopStock,
             stockChangeType: "add"
@@ -203,10 +204,10 @@ const app = getApp()
         this.shopTip("请输入商品名称");
         return false;
       }
-      if (this.data.shopIncomePrice == null || this.data.shopIncomePrice == ""){
-        this.shopTip("请输入商品进货价");
-        return false;
-      }
+      // if (this.data.shopIncomePrice == null || this.data.shopIncomePrice == ""){
+      //   this.shopTip("请输入商品进货价");
+      //   return false;
+      // }
       if (this.data.shopPrice == null || this.data.shopPrice == "") {
         this.shopTip("请输入商品价格");
         return false;
@@ -509,12 +510,20 @@ const app = getApp()
      */
     createBill:function(){
       const db = wx.cloud.database()
+      var billPrice = 0;
+      if (typeof (this.data.updateShopItem.shopIncomePrice) != "undefined"
+        && this.data.updateShopItem.shopIncomePrice != null 
+        && this.data.updateShopItem.shopIncomePrice != ""){
+        billPrice = parseFloat(this.data.updateShopItem.shopIncomePrice);
+      }else{
+        billPrice = parseFloat(this.data.updateShopItem.shopPrice);
+      }
       db.collection('bills').add({
         data:{
           shopId: this.data.updateShopItem.shopId,
           shopName: this.data.updateShopItem.shopName,
           num: this.data.changeStockNum,
-          price: this.data.changeStockNum * parseFloat(this.data.updateShopItem.shopIncomePrice),
+          price: parseInt(this.data.changeStockNum) * billPrice,
           billType: this.data.stockChangeType,
           createTime: new Date()
         },

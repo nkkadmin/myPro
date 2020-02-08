@@ -52,7 +52,7 @@ Page({
     //如果超过12小时，需要校验一次数据库这个code是否还存在
     //12小时转成秒s
     var maxTimes = 60 * 60 * 12;
-    if(disss < 60){
+    if (disss < maxTimes){
         return _callBack(true);
     }
     this.doCheckCode(res.code,function(response){

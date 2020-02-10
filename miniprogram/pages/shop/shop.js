@@ -26,6 +26,7 @@ const app = getApp()
       pageStart: 0, //当前页
       pageSize: 10, //页加载数据数量
       appendResult: false, //是否拼接数据，只有上拉分页才会拼接
+      shopTotalCount: 0,   //商品总数量
     },
     onLoad:function(){
       this.getTabBar().setData({
@@ -33,6 +34,7 @@ const app = getApp()
         showFlag: ""
       })
       this.onAllQuery();
+      this.queryShopCount();
     },
     scanShop:function(){
       var self = this;
@@ -157,7 +159,8 @@ const app = getApp()
               shopIncomePrice: self.data.shopIncomePrice
             },
             changeStockNum: self.data.shopStock,
-            stockChangeType: "add"
+            stockChangeType: "add",
+            shopTotalCount: self.data.shopTotalCount+1
           })
           //创建账单
           self.createBill();
@@ -303,6 +306,21 @@ const app = getApp()
          pageStart: this.data.pageSize + _pageStart
        })
     },
+    /**
+     * 获取商品总数量
+     */
+    queryShopCount:function(){
+      var self = this;
+      const db = wx.cloud.database()
+      // 查询商品
+      db.collection('shops')
+        .where({ shopStatus: 1 })
+        .count().then(res=>{
+          self.setData({
+            shopTotalCount: res.total
+          })
+        })
+    },
     onAllQuery: function () {
       var self = this;
       self.setData({
@@ -387,6 +405,9 @@ const app = getApp()
           success: res => {
             if (res.stats.updated > 0){
               this.shopTip("删除成功");
+              this.setData({
+                shopTotalCount: this.data.shopTotalCount-1
+              })
             }else{
               this.shopTip("删除失败，只能创建人进行删除");
             }

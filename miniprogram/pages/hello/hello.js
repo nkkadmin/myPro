@@ -48,7 +48,6 @@ Page({
     var diffTime = currentTime - cacheTime;
     //ms 转成 s
     var disss = diffTime / 1000;
-    console.log(disss,"disss");
     //如果超过12小时，需要校验一次数据库这个code是否还存在
     //12小时转成秒s
     var maxTimes = 60 * 60 * 12;

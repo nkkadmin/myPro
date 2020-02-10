@@ -2,7 +2,7 @@
   <image class='user-avatar' src="/images/avatar.png "></image>
   <text class='user-name'>欢迎来到春阳小店</text>
   <view class="anhao-class">
-    <input wx:if="{{showInput == '-1'}}" bindinput="bindInputCode" type="number" placeholder="请输入暗号"></input>
+    <input wx:if="{{showInput == '-1'}}" bindinput="bindInputCode" type="number" placeholder="你知道小店暗号吗"></input>
     <view class='moto-container' bindtap="checkCode">
       <text class='moto'>进入小店</text>
     </view>

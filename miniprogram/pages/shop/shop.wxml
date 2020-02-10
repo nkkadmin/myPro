@@ -1,5 +1,5 @@
 <view class="container">
-  <button style="position: fixed;z-index: 9999;display:block;margin:0 auto;" class="customer-sanc-button-class" loading="{{scanLoading}}" type="primary" size="default" bindtap="scanShop"> {{scanTitle}} </button>
+  <button style="position: fixed;z-index: 9999;display:block;margin:0 auto;" class="customer-sanc-button-class" loading="{{scanLoading}}" type="primary" size="default" bindtap="scanShop"> {{scanTitle}} （{{shopTotalCount}}）</button>
   <view class="form-body" wx:if="{{!showShopList}}" style="margin-bottom:50px;">
     <view class="form-section">
       <view class="weui-cells__title">商品条形码</view>

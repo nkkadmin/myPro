@@ -1,0 +1,144 @@
+<!-- 借钱表单 -->
+<view class="page">
+  <!-- 关联商品列表 -->
+   <view class="weui-panel return-money-panel">
+      <view class="weui-panel__hd">关联商品</view>
+      <view class="weui-panel__bd no-return-record" wx:if="{{bindShopList.length == 0}}">没有关联商品</view>
+      <view class="shop-list" wx:key="index" wx:for="{{bindShopList}}" wx:for-item="item">
+    <view class="weui-form-preview__bd" style="width:{{(operator == 'select') ? '':'70%'}}">
+      <view class="weui-form-preview__item">
+        <view class="weui-form-preview__label">单价</view>
+        <view class="weui-form-preview__value_in-hd">¥{{item.shopPrice}}</view>
+      </view>
+      <view class="weui-form-preview__item">
+        <view class="weui-form-preview__label">商品条形码</view>
+        <view class="weui-form-preview__value">{{item.shopId}}</view>
+      </view>
+      <view class="weui-form-preview__item">
+        <view class="weui-form-preview__label">商品名称</view>
+        <view class="weui-form-preview__value">{{item.shopName}}</view>
+      </view>
+      <view class="weui-form-preview__item">
+        <view class="weui-form-preview__label">数量</view>
+        <view class="weui-form-preview__value" style="display: flex;float: right;">
+          <button wx:if="{{operator != 'select'}}" class="weui-btn mini-btn" type="default" size="mini" bindtap="reduceShopNumber" data-index="{{index}}">-</button>
+          <input disabled="disabled" class="weui-input count-number" value="{{item.count}}"/>
+          <button wx:if="{{operator != 'select'}}" class="weui-btn mini-btn" type="default" size="mini" bindtap="addShopNumber" data-index="{{index}}">+</button>
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{operator != 'select'}}" class="delete-btn">
+      <button class="weui-btn" type="warn" bindtap="deleteInnerShop" data-index="{{index}}">删除</button>
+    </view>
+  </view>
+   </view>
+  
+  <!-- 关联商品列表 -->
+  <button wx:if="{{operator != 'select'}}" class="scan-btn weui-btn" type="primary" bindtap="scanShop">关联商品</button>
+  <!-- 借钱表单 -->
+  <view class="borrow-form">
+    <view class="weui-form__control-area">
+      <view class="weui-cells__group weui-cells__group_form">
+        <view class="weui-panel__hd">借款人相关信息</view>
+        <view class=" weui-cells_form">
+          <view class="weui-cell">
+            <view class="weui-cell__hd">
+              <label class="weui-label">借款人</label>
+            </view>
+            <view class="weui-cell__bd">
+              <input class="weui-input" type="text" value="{{form.name}}" placeholder="请输入借款人姓名" bindinput="bindNameInput" />
+            </view>
+          </view>
+        </view>
+        <view class="weui-cell">
+          <view class="weui-cell__hd">
+            <label class="weui-label">借款金额</label>
+          </view>
+          <view class="weui-cell__bd">
+            <input class="weui-input" type="digit" value="{{form.price}}" placeholder="请输入借款金额" bindinput="bindPriceInput" />
+          </view>
+        </view>
+        <view class="weui-cell">
+          <view class="weui-cell__hd">
+            <label class="weui-label">借款日期</label>
+          </view>
+          <view class="weui-cell__bd">
+            <picker mode="date" value="{{form.borrowDate}}" start="2020-01-01" end="2025-01-01" bindchange="bindDateChange">
+              <view class="weui-input">{{form.borrowDate}}</view>
+            </picker>
+          </view>
+        </view>
+        <view class="weui-cell">
+          <view class="weui-cell__hd">
+            <label class="weui-label">借款人照片</label>
+          </view>
+          <view class="weui-cell__bd">
+            <image wx:if="{{operator != 'select'}}" bindsuccess="uploadSuccess" bindtap="uploadBorrowImg" src="/images/upload.png" style="width:50px;height:50px;"></image>
+            <image bindsuccess="uploadSuccess" bindtap="openMaxImg" src="{{picImgPath}}" style="width:50px;height:50px;"></image>
+          </view>
+        </view>
+      </view>
+      <!-- 还款记录 start -->
+      <view class="weui-panel return-money-panel" wx:if="{{operator == 'select'}}">
+        <view class="weui-panel__hd">还款记录</view>
+        <view class="weui-panel__bd no-return-record" wx:if="{{returnMoneyRecoeds.length == 0}}">没有还款记录</view>
+        <view class="weui-panel__bd">
+          <view class="weui-media-box weui-media-box_small-appmsg">
+            <view class="weui-cells weui-cells_in-small-appmsg">
+              <navigator url="" class="weui-cell weui-cell_example weui-cell_access" hover-class="weui-cell_active" wx:for="{{returnMoneyRecoeds}}" wx:for-item="item">
+                <view class="weui-cell__bd weui-cell_primary">
+                  <view>{{item.price}}元</view>
+                </view>
+                <view class="weui-cell__ft">{{item.createTimeStr}}</view>
+              </navigator>
+            </view>
+          </view>
+        </view>
+      </view>
+      <!-- 还款记录 end -->
+      <button wx:if="{{operator != 'select'}}" class="weui-btn" type="primary" style="width:90%;" bindtap="save">保存</button>
+      <button wx:if="{{operator == 'select'}}" class="weui-btn" type="primary" style="width:50%;" bindtap="updateUI">修改</button>
+      <button wx:if="{{operator == 'select' && rePayMent > 0}}" class="weui-btn" type="primary" style="width:50%;" bindtap="returnMoneyUI">还钱</button>
+    </view>
+  </view>
+  <!-- 借钱表单 end -->
+  <!-- 图片大图 -->
+  <view class="weui-gallery {{showMaxImg ? 'weui-gallery_show' : ''}}" bindtap="closeMaxImg">
+    <view class="weui-gallery__img__wrp">
+      <image mode="aspectFit" class="weui-gallery__img" src="{{picImgPath}}"></image>
+    </view>
+    <view class="weui-gallery__opr" wx:if="{{operator != 'select'}}">
+      <navigator href="javascript:" bindtap="deleteImg" class="weui-gallery__del">删除</navigator>
+    </view>
+  </view>
+  <!-- 图片大图 end -->
+  <!-- 还钱表单 start -->
+  <view class="weui-demo-dialog {{isReturnMoney ? 'weui-demo-dialog_show' : ''}}">
+    <view class="weui-mask" bindtap="closeReturnMoney"></view>
+    <view class="weui-dialog__wrp" bindtap="closeReturnMoney">
+      <view class="weui-dialog" catchtap="stopEvent">
+        <view class="weui-dialog__hd">
+          <view class="weui-dialog__title">还钱（{{form.name}}）</view>
+        </view>
+        <view class="weui-dialog__bd">
+          <view class="weui-cell">
+            <view class="weui-cell__hd">
+              <label class="weui-label">还款金额</label>
+            </view>
+            <view class="weui-cell__bd">
+              <input class="weui-input input-background" type="digit" value="{{returnMoney.price}}" bindinput="bindReturnPriceInput" />
+            </view>
+            <button style="height:40px;line-height:40px;" class="weui-btn mini-btn" type="default" size="mini" bindtap="returnAllMoney">全部还款</button>
+          </view>
+          <view style="color:red;">仍需还款：¥{{rePayMent}}元</view>
+        </view>
+
+        <view class="weui-dialog__ft">
+          <view class="weui-dialog__btn weui-dialog__btn_default" bindtap="closeReturnMoney">取消</view>
+          <view class="weui-dialog__btn" bindtap="returnMoney">确定</view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <!-- 还钱表单 end -->
+</view>

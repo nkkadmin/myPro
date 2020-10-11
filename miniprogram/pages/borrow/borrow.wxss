@@ -1,0 +1,52 @@
+.borrow-hd{
+  display: flex;
+  padding: 10px 0px 0px 10px;
+  position: fixed;
+  z-index: 1;
+  background-color: #fff;
+  width: 100%;
+}
+.borrow-hd input{
+  height: 40px;
+  border: 1px solid #eee;
+  width: 50%;
+  border-radius: 5px;
+  text-align: center;
+}
+.borrow-hd button{
+  height: 40px;
+  line-height: 40px;
+  width: 20%;
+  margin-left: 5px;
+}
+.borrow-list{
+  padding-top: 50px; 
+}
+.customer-price{
+  float: right;
+}
+.return-off{
+  width: 80px;
+  height: 80px;
+  position: absolute;
+  top: 7px;
+  right: 13px;
+}
+.bf-return-color {
+  display: inline;
+  color: #e0a063;
+}
+.all-return-color {
+  display: inline;
+  color: #1aad19;
+}
+.no-return-color {
+  color: red; 
+  display: inline;
+}
+.no-borrow-record{
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  color: rgb(136, 134, 134);
+}

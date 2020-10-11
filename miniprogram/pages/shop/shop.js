@@ -274,7 +274,7 @@ const app = getApp()
       const db = wx.cloud.database()
       // 查询商品
       db.collection('shops').where({
-        shopId: this.data.shopId,
+        shopId: this.data.shopId, 
         shopStatus: 1
       }).get({
         success: res => {
@@ -334,7 +334,8 @@ const app = getApp()
       const db = wx.cloud.database()
       // 查询商品
       db.collection('shops')
-            .where({shopStatus:1})
+        .where({ shopStatus: 1})
+            .where({shopStatus:1,})
             .orderBy("updateTime","desc")
             .skip(self.data.pageStart)
             .limit(self.data.pageSize)

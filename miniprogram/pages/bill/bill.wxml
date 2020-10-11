@@ -1,19 +1,17 @@
 <view class="page">
   <view class="page__bd">
-    <view class="weui-panel weui-panel_access">
-      <view class="weui-panel__hd" style="position: fixed;z-index: 999;width:100%;">
-        <view class="query-select {{inComeSelectFlag ? 'select-color' : 'no-select-color'}}" bindtap="queryParamChange" data-type="income">收入</view>
-        <view class="query-select {{paySelectFlag ? 'select-color' : 'no-select-color'}}" bindtap="queryParamChange" data-type="pay">支出</view>
+    <view class="weui-panel weui-panel_access" style="height:100%;">
+      <view class="weui-panel__hd query-panel">
+        <view class="query-select {{queryAllFlag ? 'select-color' : 'no-select-color'}}" bindtap="queryChangeParam" data-type="all">全部</view>
+        <view class="query-select query-inner {{inComeSelectFlag ? 'select-color' : 'no-select-color'}}" bindtap="queryChangeParam" data-type="income">收入</view>
+        <view class="query-select {{paySelectFlag ? 'select-color' : 'no-select-color'}}" bindtap="queryChangeParam" data-type="pay">支出</view>
       </view>
       <view class="weui-loadmore" style="padding-top: 60px;" wx:if="{{loading}}">
         <view class="weui-loading"></view>
         <view class="weui-loadmore__tips">正在加载</view>
       </view>
-      <view class="weui-panel__bd" style="margin-bottom: 40px;margin-top: 70px;">
+      <view class="weui-panel__bd" style="margin-bottom: 40px;margin-top: 45px;">
         <navigator url="" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active" wx:for="{{listResult}}" wx:key="index" wx:for-item="item">
-          <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-            <image class="weui-media-box__thumb" src="{{item.billType == 'subtract' ? '/images/icon_income.png':'/images/icon_pay.png'}}" />
-          </view>
           <view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
             <view class="weui-media-box__title">
               {{item.shopName}}
@@ -27,6 +25,8 @@
             <view class="weui-media-box__desc">
               {{item.createTimeStr}}
             </view>
+            <image  wx:if="{{item.billType != 'subtract'}}" src="/images/icon-zc.png" class="bill-image-type"></image>
+            <image wx:if="{{item.billType == 'subtract'}}" src="/images/icon-sr.png" class="bill-image-type"></image>
           </view>
         </navigator>
       </view>

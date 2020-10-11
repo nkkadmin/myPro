@@ -13,11 +13,6 @@ Page({
     showBillDialog: false,    //是否显示账单详情弹框
   },
   onLoad: function () {
-    this.getTabBar().setData({
-      selected: 2,
-      showFlag: ""
-    })
-    
     this.queryToday("today");
     this.queryThisWeek("week");
     this.queryThisMonth("month");

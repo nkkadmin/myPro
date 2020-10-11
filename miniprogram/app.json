@@ -1,6 +1,9 @@
 {
   "pages": [
     "pages/hello/hello",
+    "pages/borrow/borrow",
+    "pages/borrowEdit/borrowEdit",
+    "pages/tools/tools",
     "pages/shop/shop",
     "pages/bill/bill",
     "pages/statistic/index",
@@ -29,10 +32,10 @@
         "text": "商品"
       },
       {
-        "pagePath": "pages/statistic/index",
+        "pagePath": "pages/tools/tools",
         "iconPath": "images/icon_statistic.png",
         "selectedIconPath": "images/icon_statistic_HL.png",
-        "text": "统计"
+        "text": "小工具"
       }
     ]
   },

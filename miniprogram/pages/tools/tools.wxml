@@ -1,0 +1,17 @@
+<view class="page">
+  <view class="page__header">
+    <view class="page__desc">小工具列表</view>
+  </view>
+  <view class="page__bd">
+    <view class="weui-grids">
+      <navigator url="/pages/statistic/index" class="weui-grid" hover-class="weui-grid_active">
+        <image class="weui-grid__icon" src="/images/icon_statistic_HL.png" />
+        <view class="weui-grid__label">统计</view>
+      </navigator>
+      <navigator url="/pages/borrow/borrow" class="weui-grid" hover-class="weui-grid_active">
+        <image class="weui-grid__icon" src="/images/borrow-money.png" />
+        <view class="weui-grid__label">借款管理</view>
+      </navigator>
+    </view>
+  </view>
+</view>

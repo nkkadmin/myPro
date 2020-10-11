@@ -1,0 +1,59 @@
+/* pages/borrowEdit/borrowEdit.wxss */
+.shop-list{
+  margin-bottom: 5px;
+  position: relative;
+}
+.delete-btn{
+  position: absolute;
+  top: 20px;
+  right: 10px;
+}
+.delete-btn button{
+  height: 100px;
+  line-height: 100px;
+}
+.scan-btn{
+  margin-top: 10px;
+  width:90%;
+}
+.mini-btn{
+    margin: 0 4px;
+}
+.input-background{
+  background-color: rgb(219, 214, 214);
+  height: 40px;
+  border-radius: 5px;
+  margin: 0px 0px 0px 5px;
+}
+.weui-demo-dialog{
+  visibility:hidden;
+  opacity:0;
+  transition:opacity .3s;
+}
+.weui-demo-dialog_show{
+  visibility:visible;
+  opacity:1;
+}
+.return-money-panel{
+  margin-bottom: 20px;
+}
+.no-return-record{
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  color: rgb(136, 134, 134);
+}
+.weui-form__control-area{
+  margin: 0 !important;
+}
+.borrow-form{
+  margin-bottom: 30px;
+}
+.count-number{
+  width: 24px;
+  line-height: 5px;
+  border: 1px solid #eee;
+  height: 29px !important;
+  border-radius: 5px;
+  text-align: center;
+}

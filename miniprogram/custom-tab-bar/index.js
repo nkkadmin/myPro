@@ -14,10 +14,10 @@ Component({
         selectedIconPath: "/images/icon_bill_HL.png",
         text: "账单"
       }, {
-        pagePath: "/pages/statistic/index",
-      iconPath: "/images/icon_statistic.png",
-      selectedIconPath: "/images/icon_statistic_HL.png",
-      text: "统计"
+        pagePath: "/pages/tools/tools",
+      iconPath: "/images/icon_tools.png",
+      selectedIconPath: "/images/icon_tools_HL.png",
+      text: "小工具"
     }]
   },
   attached() {

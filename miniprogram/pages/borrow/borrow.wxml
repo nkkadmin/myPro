@@ -1,0 +1,45 @@
+<view class="page">
+  <view class="borrow-hd">
+    <input class="weui-input" type="text" value="{{queryKeyWord}}" bindinput="bindInputValue"></input>
+    <button type="default" bindtap="queryByName">查询</button>
+    <button style="margin-left:-15px;" loading="{{scanLoading}}" type="primary" size="default" bindtap="toBorrowEditUI">借钱</button>
+  </view>
+  
+  <view class="weui-panel__bd borrow-list">
+    <view class="weui-panel__bd no-borrow-record" wx:if="{{results.length == 0}}">没有借款记录</view>
+    <navigator url="" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active" wx:for="{{results}}" wx:for-item="item">
+      <view class="weui-media-box__hd weui-media-box__hd_in-appmsg" data-item="{{item}}" bindtap="openMaxImg">
+        <image class="weui-media-box__thumb" src="{{item.imgPath == '' ? '/images/no-pic.png' : item.imgPath}}" />
+      </view>
+      <view class="weui-media-box__bd weui-media-box__bd_in-appmsg" id="{{item._id}}" bindtap="infoUI">
+        <view class="weui-media-box__title">{{item.name}}
+          <view class="customer-price">
+            -¥{{item.price}}
+          </view>
+        </view>
+        <view class="weui-media-box__desc">
+          状态：
+          <view wx:if="{{item.status == '1'}}" class="no-return-color">{{item.statusDesc}}</view> 
+          <view wx:if="{{item.status == '0'}}" class="bf-return-color">{{item.statusDesc}}</view>
+          <view wx:if="{{item.status == '-1'}}" class="all-return-color">{{item.statusDesc}}</view>   
+        </view>
+        <view class="weui-media-box__desc">
+          日期：{{item.borrowDate}}
+        </view>
+        <image wx:if="{{item.status == '-1'}}" class="return-off" src="/images/returned.png" />
+      </view>
+    </navigator>
+  </view>
+
+   <!-- 图片大图 -->
+    <view class="weui-gallery {{showMaxImgDiloag ? 'weui-gallery_show' : ''}}" bindtap="closeMaxImg">
+      <view class="weui-gallery__info">{{maxImgInName}}</view>
+        <view class="weui-gallery__img__wrp">
+              <image mode="aspectFit" class="weui-gallery__img" src="{{maxImgPath}}"></image>
+        </view>
+        <view class="weui-gallery__opr">
+          <navigator href="javascript:" bindtap="closeMaxImg" class="weui-gallery__del">关闭</navigator>
+        </view>
+      </view>
+      <!-- 图片大图 end -->
+</view>
